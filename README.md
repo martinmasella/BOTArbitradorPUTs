@@ -2,10 +2,7 @@
 
 ## 📄 Descripción
 
-Es un detector de PUTs bajo la par en BYMA estilo:
--Cuttela Brothers.
--Pancho Mancuso.
--Rudolph.
+Es un detector de PUTs bajo la par en BYMA estilo Cuttela Brothers, Pancho Mancuso o Rudolph.
 
 ## 🛠 Installation
 
