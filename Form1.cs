@@ -84,12 +84,12 @@ namespace BOTArbitradorPUTs
             
             tickers = new[] {"MERV - XMEV - GGAL - 48hs",
                 "MERV - XMEV - GGAL - CI",
-                "MERV - XMEV - GFGV96456aG - 24hs",
-                "MERV - XMEV - GFGV1033AG - 24hs",
-                "MERV - XMEV - GFGV1083AG - 24hs",
-                "MERV - XMEV - GFGV1133AG - 24hs",
-                "MERV - XMEV - GFGV1183AG - 24hs",
-                "MERV - XMEV - GFGV1233AG - 24hs"};
+                "MERV - XMEV - GFGV1083OC - 24hs",
+                "MERV - XMEV - GFGV1133OC - 24hs",
+//                "MERV - XMEV - GFGV1083AG - 24hs",
+//                "MERV - XMEV - GFGV1133AG - 24hs",
+//                "MERV - XMEV - GFGV1183AG - 24hs",
+                "MERV - XMEV - GFGV1333OC - 24hs"};
             var instrumentos = allInstruments.Where(c => tickers.Contains(c.Symbol));
 
             /*
