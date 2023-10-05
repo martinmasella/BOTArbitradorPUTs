@@ -8,8 +8,10 @@ namespace BOTArbitradorPUTs
 {
     public partial class frmMain : Form
     {
+        /*
         const string sURL = "https://api.invertironline.com";
         const string SURLOper = "https://www.invertironline.com";
+        */
         const string sURLVETA = "https://api.veta.xoms.com.ar";
 
         string tokenVETA;
@@ -63,10 +65,6 @@ namespace BOTArbitradorPUTs
             grdDatos.Columns.Add("Neto", "Neto");
             grdDatos.Columns[10].Width = 50;
             grdDatos.Columns[10].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-        }
-
-        private void frmMain_FormClosing(object sender, FormClosingEventArgs e)
-        {
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
