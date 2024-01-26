@@ -82,12 +82,12 @@ namespace BOTArbitradorPUTs
             
             tickers = new[] {"MERV - XMEV - GGAL - 48hs",
                 "MERV - XMEV - GGAL - CI",
-                "MERV - XMEV - GFGV12415D - 24hs",
-                "MERV - XMEV - GFGV12915D - 24hs",
-//                "MERV - XMEV - GFGV1083AG - 24hs",
-//                "MERV - XMEV - GFGV1133AG - 24hs",
+                "MERV - XMEV - GFGV2600FE - 24hs",
+                "MERV - XMEV - GFGV2700FE - 24hs",
+                "MERV - XMEV - GFGV2800FE - 24hs",
+                "MERV - XMEV - GFGV2900FE - 24hs",
 //                "MERV - XMEV - GFGV1183AG - 24hs",
-                "MERV - XMEV - GFGV13915D - 24hs"};
+                "MERV - XMEV - GFGV3000FE - 24hs"};
             var instrumentos = allInstruments.Where(c => tickers.Contains(c.Symbol));
 
             /*
@@ -189,8 +189,8 @@ namespace BOTArbitradorPUTs
                         else
                         {
                             costo = offer / 100 * (decimal)0.37;
-                            //strike = decimal.Parse(row.Cells[0].Value.ToString().Substring(18, 4)) / 1;
-                            strike = decimal.Parse(row.Cells[0].Value.ToString().Substring(18, 5)) / 10;
+                            strike = decimal.Parse(row.Cells[0].Value.ToString().Substring(18, 4)) / 1;
+                            //strike = decimal.Parse(row.Cells[0].Value.ToString().Substring(18, 5)) / 10;
                             //strike = decimal.Parse(row.Cells[0].Value.ToString().Substring(18, 3)) / 1;
                             ejercer = strike * (decimal)1.0022;
                             row.Cells[8].Value = ejercer;
