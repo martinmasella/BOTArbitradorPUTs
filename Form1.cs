@@ -2,6 +2,8 @@ using System;
 using System.Configuration;
 using Primary;
 using Primary.Data;
+using Microsoft.Extensions.Configuration;
+using Newtonsoft.Json.Linq;
 
 
 namespace BOTArbitradorPUTs
@@ -31,6 +33,23 @@ namespace BOTArbitradorPUTs
             this.Text = "BOT Arbitrador de PUTs bajo la par estilo Cuttela - Copyright 2022 Tinchex Capital";
             DoubleBuffered = true;
             CheckForIllegalCrossThreadCalls = false;
+
+            var configuracion = new ConfigurationBuilder()
+                .SetBasePath(AppContext.BaseDirectory)
+                .AddJsonFile("appsettings.json", optional: true, reloadOnChange: true)
+                .Build();
+
+            try
+            {
+                txtUsuarioIOL.Text = configuracion.GetSection("MiConfiguracion:UserIOL").Value;
+                txtClaveIOL.Text = configuracion.GetSection("MiConfiguracion:ClaveIOL").Value;
+                txtUsuarioVETA.Text = configuracion.GetSection("MiConfiguracion:UserVETA").Value;
+                txtClaveVETA.Text = configuracion.GetSection("MiConfiguracion:ClaveVETA").Value;
+            }
+            catch (Exception ex)
+            {
+
+            }
 
             grdDatos.Rows.Clear();
             grdDatos.Columns.Add("Ticker", "Ticker");
