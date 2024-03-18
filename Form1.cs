@@ -101,12 +101,12 @@ namespace BOTArbitradorPUTs
             
             tickers = new[] {"MERV - XMEV - GGAL - 48hs",
                 "MERV - XMEV - GGAL - CI",
-                "MERV - XMEV - GFGV2600FE - 24hs",
-                "MERV - XMEV - GFGV2700FE - 24hs",
-                "MERV - XMEV - GFGV2800FE - 24hs",
-                "MERV - XMEV - GFGV2900FE - 24hs",
-//                "MERV - XMEV - GFGV1183AG - 24hs",
-                "MERV - XMEV - GFGV3000FE - 24hs"};
+                "MERV - XMEV - GFGV2600AB - 24hs",
+                "MERV - XMEV - GFGV2700AB - 24hs",
+                "MERV - XMEV - GFGV2800AB - 24hs",
+                "MERV - XMEV - GFGV2900AB - 24hs",
+//                "MERV - XMEV - GFGV11ABAG - 24hs",
+                "MERV - XMEV - GFGV3000AB - 24hs"};
             var instrumentos = allInstruments.Where(c => tickers.Contains(c.Symbol));
 
             /*
@@ -229,7 +229,7 @@ namespace BOTArbitradorPUTs
                         }
                         else
                         {
-                            ratio = ((ejercer / armar) - 1) * 100;
+                            ratio = Math.Round(((ejercer / armar) - 1) * 100,2);
                         }
                         row.Cells[9].Value = ratio;
                         neto = ejercer - armar;
