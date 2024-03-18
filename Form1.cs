@@ -53,12 +53,13 @@ namespace BOTArbitradorPUTs
 
             grdDatos.Rows.Clear();
             grdDatos.Columns.Add("Ticker", "Ticker");
-            grdDatos.Columns[0].Width = 180;
+            grdDatos.Columns[0].Width = 160;
+            grdDatos.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
             grdDatos.Columns.Add("Stamp", "Stamp");
             grdDatos.Columns[1].Width = 50;
             grdDatos.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             grdDatos.Columns.Add("Bid", "Bid");
-            grdDatos.Columns[2].Width = 50;
+            grdDatos.Columns[2].Width = 40;
             grdDatos.Columns[2].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Last", "Last");
             grdDatos.Columns[3].Width = 50;
@@ -66,8 +67,8 @@ namespace BOTArbitradorPUTs
             grdDatos.Columns.Add("Ask", "Ask");
             grdDatos.Columns[4].Width = 50;
             grdDatos.Columns[4].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
-            grdDatos.Columns.Add("AskSize", "AskSize");
-            grdDatos.Columns[5].Width = 50;
+            grdDatos.Columns.Add("AskSize", "Ask Size");
+            grdDatos.Columns[5].Width = 30;
             grdDatos.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("CostCpra", "Costo Compra");
             grdDatos.Columns[6].Width = 50;
@@ -79,11 +80,12 @@ namespace BOTArbitradorPUTs
             grdDatos.Columns[8].Width = 50;
             grdDatos.Columns[8].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Ratio", "Ratio");
-            grdDatos.Columns[9].Width = 50;
+            grdDatos.Columns[9].Width = 40;
             grdDatos.Columns[9].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Neto", "Neto");
-            grdDatos.Columns[10].Width = 50;
+            grdDatos.Columns[10].Width = 40;
             grdDatos.Columns[10].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
+            grdDatos.RowHeadersWidth = 4;
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
@@ -120,6 +122,7 @@ namespace BOTArbitradorPUTs
             foreach (var instrument in instrumentos.Where(i => i.Symbol.EndsWith("24hs")).OrderBy(i => i.Symbol))
             {
                 grdDatos.Rows.Add(instrument.Symbol);
+                grdDatos.Rows[grdDatos.Rows.Count - 1].Cells[0].Style.WrapMode=DataGridViewTriState.True;
             }
 
             var socket = api.CreateMarketDataSocket(instrumentos, entries, 1, 1);
@@ -188,9 +191,9 @@ namespace BOTArbitradorPUTs
                     if (ticker == row.Cells[0].Value.ToString())
                     {
                         row.Cells[1].Value = dt.ToString("T");
-                        row.Cells[2].Value = bid;
-                        row.Cells[3].Value = last;
-                        row.Cells[4].Value = offer;
+                        row.Cells[2].Value = Math.Round(bid,2);
+                        row.Cells[3].Value = Math.Round(last,2);
+                        row.Cells[4].Value = Math.Round(offer,2);
                         row.Cells[5].Value = offerSize;
 
                         if (ticker.Contains("GGAL"))
@@ -232,7 +235,7 @@ namespace BOTArbitradorPUTs
                             ratio = Math.Round(((ejercer / armar) - 1) * 100,2);
                         }
                         row.Cells[9].Value = ratio;
-                        neto = ejercer - armar;
+                        neto = Math.Round(ejercer - armar,2);
                         row.Cells[10].Value = neto;
                         if (ratio>0)
                         {

@@ -28,231 +28,188 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.grbLogin = new System.Windows.Forms.GroupBox();
-            this.textBox1 = new System.Windows.Forms.TextBox();
-            this.label8 = new System.Windows.Forms.Label();
-            this.txtClaveVETA = new System.Windows.Forms.TextBox();
-            this.label5 = new System.Windows.Forms.Label();
-            this.txtUsuarioVETA = new System.Windows.Forms.TextBox();
-            this.label6 = new System.Windows.Forms.Label();
-            this.label7 = new System.Windows.Forms.Label();
-            this.txtBearer = new System.Windows.Forms.TextBox();
-            this.label4 = new System.Windows.Forms.Label();
-            this.btnLogin = new System.Windows.Forms.Button();
-            this.txtClaveIOL = new System.Windows.Forms.TextBox();
-            this.label3 = new System.Windows.Forms.Label();
-            this.txtUsuarioIOL = new System.Windows.Forms.TextBox();
-            this.label2 = new System.Windows.Forms.Label();
-            this.label1 = new System.Windows.Forms.Label();
-            this.grbLog = new System.Windows.Forms.GroupBox();
-            this.lbLog = new System.Windows.Forms.ListBox();
-            this.grdDatos = new System.Windows.Forms.DataGridView();
-            this.grbLogin.SuspendLayout();
-            this.grbLog.SuspendLayout();
-            ((System.ComponentModel.ISupportInitialize)(this.grdDatos)).BeginInit();
-            this.SuspendLayout();
+            grbLogin = new GroupBox();
+            txtClaveVETA = new TextBox();
+            label5 = new Label();
+            txtUsuarioVETA = new TextBox();
+            label6 = new Label();
+            label7 = new Label();
+            btnLogin = new Button();
+            txtClaveIOL = new TextBox();
+            label3 = new Label();
+            txtUsuarioIOL = new TextBox();
+            label2 = new Label();
+            label1 = new Label();
+            grbLog = new GroupBox();
+            lbLog = new ListBox();
+            grdDatos = new DataGridView();
+            grbLogin.SuspendLayout();
+            grbLog.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)grdDatos).BeginInit();
+            SuspendLayout();
             // 
             // grbLogin
             // 
-            this.grbLogin.Controls.Add(this.textBox1);
-            this.grbLogin.Controls.Add(this.label8);
-            this.grbLogin.Controls.Add(this.txtClaveVETA);
-            this.grbLogin.Controls.Add(this.label5);
-            this.grbLogin.Controls.Add(this.txtUsuarioVETA);
-            this.grbLogin.Controls.Add(this.label6);
-            this.grbLogin.Controls.Add(this.label7);
-            this.grbLogin.Controls.Add(this.txtBearer);
-            this.grbLogin.Controls.Add(this.label4);
-            this.grbLogin.Controls.Add(this.btnLogin);
-            this.grbLogin.Controls.Add(this.txtClaveIOL);
-            this.grbLogin.Controls.Add(this.label3);
-            this.grbLogin.Controls.Add(this.txtUsuarioIOL);
-            this.grbLogin.Controls.Add(this.label2);
-            this.grbLogin.Controls.Add(this.label1);
-            this.grbLogin.Location = new System.Drawing.Point(12, 227);
-            this.grbLogin.Name = "grbLogin";
-            this.grbLogin.Size = new System.Drawing.Size(488, 77);
-            this.grbLogin.TabIndex = 0;
-            this.grbLogin.TabStop = false;
-            this.grbLogin.Text = "Logins";
-            // 
-            // textBox1
-            // 
-            this.textBox1.Location = new System.Drawing.Point(429, 47);
-            this.textBox1.Name = "textBox1";
-            this.textBox1.ReadOnly = true;
-            this.textBox1.Size = new System.Drawing.Size(48, 23);
-            this.textBox1.TabIndex = 14;
-            // 
-            // label8
-            // 
-            this.label8.AutoSize = true;
-            this.label8.Location = new System.Drawing.Point(360, 50);
-            this.label8.Name = "label8";
-            this.label8.Size = new System.Drawing.Size(54, 15);
-            this.label8.TabIndex = 13;
-            this.label8.Text = "Vence en";
+            grbLogin.Controls.Add(txtClaveVETA);
+            grbLogin.Controls.Add(label5);
+            grbLogin.Controls.Add(txtUsuarioVETA);
+            grbLogin.Controls.Add(label6);
+            grbLogin.Controls.Add(label7);
+            grbLogin.Controls.Add(btnLogin);
+            grbLogin.Controls.Add(txtClaveIOL);
+            grbLogin.Controls.Add(label3);
+            grbLogin.Controls.Add(txtUsuarioIOL);
+            grbLogin.Controls.Add(label2);
+            grbLogin.Controls.Add(label1);
+            grbLogin.Location = new Point(12, 227);
+            grbLogin.Name = "grbLogin";
+            grbLogin.Size = new Size(366, 77);
+            grbLogin.TabIndex = 0;
+            grbLogin.TabStop = false;
+            grbLogin.Text = "Logins";
             // 
             // txtClaveVETA
             // 
-            this.txtClaveVETA.Location = new System.Drawing.Point(217, 47);
-            this.txtClaveVETA.Name = "txtClaveVETA";
-            this.txtClaveVETA.Size = new System.Drawing.Size(76, 23);
-            this.txtClaveVETA.TabIndex = 12;
-            this.txtClaveVETA.UseSystemPasswordChar = true;
+            txtClaveVETA.Location = new Point(217, 47);
+            txtClaveVETA.Name = "txtClaveVETA";
+            txtClaveVETA.Size = new Size(76, 23);
+            txtClaveVETA.TabIndex = 12;
+            txtClaveVETA.UseSystemPasswordChar = true;
             // 
             // label5
             // 
-            this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(175, 50);
-            this.label5.Name = "label5";
-            this.label5.Size = new System.Drawing.Size(36, 15);
-            this.label5.TabIndex = 11;
-            this.label5.Text = "Clave";
+            label5.AutoSize = true;
+            label5.Location = new Point(175, 50);
+            label5.Name = "label5";
+            label5.Size = new Size(36, 15);
+            label5.TabIndex = 11;
+            label5.Text = "Clave";
             // 
             // txtUsuarioVETA
             // 
-            this.txtUsuarioVETA.Location = new System.Drawing.Point(97, 47);
-            this.txtUsuarioVETA.Name = "txtUsuarioVETA";
-            this.txtUsuarioVETA.Size = new System.Drawing.Size(68, 23);
-            this.txtUsuarioVETA.TabIndex = 10;
+            txtUsuarioVETA.Location = new Point(97, 47);
+            txtUsuarioVETA.Name = "txtUsuarioVETA";
+            txtUsuarioVETA.Size = new Size(68, 23);
+            txtUsuarioVETA.TabIndex = 10;
             // 
             // label6
             // 
-            this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(42, 50);
-            this.label6.Name = "label6";
-            this.label6.Size = new System.Drawing.Size(47, 15);
-            this.label6.TabIndex = 9;
-            this.label6.Text = "Usuario";
+            label6.AutoSize = true;
+            label6.Location = new Point(42, 50);
+            label6.Name = "label6";
+            label6.Size = new Size(47, 15);
+            label6.TabIndex = 9;
+            label6.Text = "Usuario";
             // 
             // label7
             // 
-            this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(7, 50);
-            this.label7.Name = "label7";
-            this.label7.Size = new System.Drawing.Size(33, 15);
-            this.label7.TabIndex = 8;
-            this.label7.Text = "VETA";
-            // 
-            // txtBearer
-            // 
-            this.txtBearer.Location = new System.Drawing.Point(429, 18);
-            this.txtBearer.Name = "txtBearer";
-            this.txtBearer.ReadOnly = true;
-            this.txtBearer.Size = new System.Drawing.Size(48, 23);
-            this.txtBearer.TabIndex = 7;
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(374, 21);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(40, 15);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "Bearer";
+            label7.AutoSize = true;
+            label7.Location = new Point(7, 50);
+            label7.Name = "label7";
+            label7.Size = new Size(33, 15);
+            label7.TabIndex = 8;
+            label7.Text = "VETA";
             // 
             // btnLogin
             // 
-            this.btnLogin.Location = new System.Drawing.Point(305, 18);
-            this.btnLogin.Name = "btnLogin";
-            this.btnLogin.Size = new System.Drawing.Size(51, 52);
-            this.btnLogin.TabIndex = 5;
-            this.btnLogin.Text = "Login";
-            this.btnLogin.UseVisualStyleBackColor = true;
-            this.btnLogin.Click += new System.EventHandler(this.btnLogin_Click);
+            btnLogin.Location = new Point(305, 18);
+            btnLogin.Name = "btnLogin";
+            btnLogin.Size = new Size(51, 52);
+            btnLogin.TabIndex = 5;
+            btnLogin.Text = "Login";
+            btnLogin.UseVisualStyleBackColor = true;
+            btnLogin.Click += btnLogin_Click;
             // 
             // txtClaveIOL
             // 
-            this.txtClaveIOL.Location = new System.Drawing.Point(217, 18);
-            this.txtClaveIOL.Name = "txtClaveIOL";
-            this.txtClaveIOL.Size = new System.Drawing.Size(76, 23);
-            this.txtClaveIOL.TabIndex = 4;
-            this.txtClaveIOL.UseSystemPasswordChar = true;
+            txtClaveIOL.Location = new Point(217, 18);
+            txtClaveIOL.Name = "txtClaveIOL";
+            txtClaveIOL.Size = new Size(76, 23);
+            txtClaveIOL.TabIndex = 4;
+            txtClaveIOL.UseSystemPasswordChar = true;
             // 
             // label3
             // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(175, 21);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(36, 15);
-            this.label3.TabIndex = 3;
-            this.label3.Text = "Clave";
+            label3.AutoSize = true;
+            label3.Location = new Point(175, 21);
+            label3.Name = "label3";
+            label3.Size = new Size(36, 15);
+            label3.TabIndex = 3;
+            label3.Text = "Clave";
             // 
             // txtUsuarioIOL
             // 
-            this.txtUsuarioIOL.Location = new System.Drawing.Point(97, 18);
-            this.txtUsuarioIOL.Name = "txtUsuarioIOL";
-            this.txtUsuarioIOL.Size = new System.Drawing.Size(68, 23);
-            this.txtUsuarioIOL.TabIndex = 2;
+            txtUsuarioIOL.Location = new Point(97, 18);
+            txtUsuarioIOL.Name = "txtUsuarioIOL";
+            txtUsuarioIOL.Size = new Size(68, 23);
+            txtUsuarioIOL.TabIndex = 2;
             // 
             // label2
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(42, 21);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(47, 15);
-            this.label2.TabIndex = 1;
-            this.label2.Text = "Usuario";
+            label2.AutoSize = true;
+            label2.Location = new Point(42, 21);
+            label2.Name = "label2";
+            label2.Size = new Size(47, 15);
+            label2.TabIndex = 1;
+            label2.Text = "Usuario";
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(7, 21);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(25, 15);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "IOL";
+            label1.AutoSize = true;
+            label1.Location = new Point(7, 21);
+            label1.Name = "label1";
+            label1.Size = new Size(25, 15);
+            label1.TabIndex = 0;
+            label1.Text = "IOL";
             // 
             // grbLog
             // 
-            this.grbLog.Controls.Add(this.lbLog);
-            this.grbLog.Location = new System.Drawing.Point(506, 227);
-            this.grbLog.Name = "grbLog";
-            this.grbLog.Size = new System.Drawing.Size(246, 77);
-            this.grbLog.TabIndex = 1;
-            this.grbLog.TabStop = false;
-            this.grbLog.Text = "Log";
+            grbLog.Controls.Add(lbLog);
+            grbLog.Location = new Point(384, 227);
+            grbLog.Name = "grbLog";
+            grbLog.Size = new Size(246, 77);
+            grbLog.TabIndex = 1;
+            grbLog.TabStop = false;
+            grbLog.Text = "Log";
             // 
             // lbLog
             // 
-            this.lbLog.FormattingEnabled = true;
-            this.lbLog.ItemHeight = 15;
-            this.lbLog.Location = new System.Drawing.Point(10, 19);
-            this.lbLog.Name = "lbLog";
-            this.lbLog.Size = new System.Drawing.Size(230, 49);
-            this.lbLog.TabIndex = 0;
+            lbLog.FormattingEnabled = true;
+            lbLog.ItemHeight = 15;
+            lbLog.Location = new Point(10, 19);
+            lbLog.Name = "lbLog";
+            lbLog.Size = new Size(230, 49);
+            lbLog.TabIndex = 0;
             // 
             // grdDatos
             // 
-            this.grdDatos.AllowUserToAddRows = false;
-            this.grdDatos.AllowUserToDeleteRows = false;
-            this.grdDatos.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.grdDatos.Location = new System.Drawing.Point(12, 12);
-            this.grdDatos.Name = "grdDatos";
-            this.grdDatos.ReadOnly = true;
-            this.grdDatos.RowTemplate.DefaultCellStyle.Font = new System.Drawing.Font("Arial Narrow", 8.25F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point);
-            this.grdDatos.RowTemplate.Height = 20;
-            this.grdDatos.Size = new System.Drawing.Size(740, 209);
-            this.grdDatos.TabIndex = 2;
+            grdDatos.AllowUserToAddRows = false;
+            grdDatos.AllowUserToDeleteRows = false;
+            grdDatos.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            grdDatos.Location = new Point(12, 12);
+            grdDatos.Name = "grdDatos";
+            grdDatos.ReadOnly = true;
+            grdDatos.RowTemplate.DefaultCellStyle.Font = new Font("Arial Narrow", 8.25F, FontStyle.Regular, GraphicsUnit.Point);
+            grdDatos.RowTemplate.Height = 20;
+            grdDatos.Size = new Size(618, 209);
+            grdDatos.TabIndex = 2;
             // 
             // frmMain
             // 
-            this.AutoScaleDimensions = new System.Drawing.SizeF(7F, 15F);
-            this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(763, 310);
-            this.Controls.Add(this.grdDatos);
-            this.Controls.Add(this.grbLog);
-            this.Controls.Add(this.grbLogin);
-            this.Name = "frmMain";
-            this.Text = "Form1";
-            this.Load += new System.EventHandler(this.frmMain_Load);
-            this.grbLogin.ResumeLayout(false);
-            this.grbLogin.PerformLayout();
-            this.grbLog.ResumeLayout(false);
-            ((System.ComponentModel.ISupportInitialize)(this.grdDatos)).EndInit();
-            this.ResumeLayout(false);
-
+            AutoScaleDimensions = new SizeF(7F, 15F);
+            AutoScaleMode = AutoScaleMode.Font;
+            ClientSize = new Size(638, 310);
+            Controls.Add(grdDatos);
+            Controls.Add(grbLog);
+            Controls.Add(grbLogin);
+            Name = "frmMain";
+            Text = "Form1";
+            Load += frmMain_Load;
+            grbLogin.ResumeLayout(false);
+            grbLogin.PerformLayout();
+            grbLog.ResumeLayout(false);
+            ((System.ComponentModel.ISupportInitialize)grdDatos).EndInit();
+            ResumeLayout(false);
         }
 
         #endregion
@@ -266,13 +223,9 @@
         private TextBox txtUsuarioVETA;
         private Label label6;
         private Label label7;
-        private TextBox txtBearer;
-        private Label label4;
         private Button btnLogin;
         private TextBox txtClaveIOL;
         private Label label3;
-        private TextBox textBox1;
-        private Label label8;
         private GroupBox grbLog;
         private ListBox lbLog;
         private DataGridView grdDatos;
