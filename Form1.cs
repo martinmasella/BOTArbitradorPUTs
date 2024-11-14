@@ -101,15 +101,15 @@ namespace BOTArbitradorPUTs
             var entries = new[] { Entry.Last, Entry.Bids, Entry.Offers };
 
             
-            tickers = new[] {"MERV - XMEV - GGAL - 48hs",
+            tickers = new[] {"MERV - XMEV - GGAL - 24hs",
                 "MERV - XMEV - GGAL - CI",
-                "MERV - XMEV - GFGV2900JU - 24hs",
-                "MERV - XMEV - GFGV3000JU - 24hs",
-                "MERV - XMEV - GFGV3150JU - 24hs",
-                "MERV - XMEV - GFGV2300JU - 24hs",
-                "MERV - XMEV - GFGV3450JU - 24hs",
-                "MERV - XMEV - GFGV3600JU - 24hs",
-                "MERV - XMEV - GFGV3750JU - 24hs"};
+                "MERV - XMEV - GFGV6400DI - 24hs",
+                "MERV - XMEV - GFGV6600DI - 24hs",
+                "MERV - XMEV - GFGV6800DI - 24hs",
+                "MERV - XMEV - GFGV7000DI - 24hs",
+                "MERV - XMEV - GFGV7200DI - 24hs",
+                "MERV - XMEV - GFGV7400DI - 24hs",
+                "MERV - XMEV - GFGV7600DI - 24hs"};
             var instrumentos = allInstruments.Where(c => tickers.Contains(c.Symbol));
 
             /*
@@ -118,7 +118,7 @@ namespace BOTArbitradorPUTs
             */
 
             grdDatos.Rows.Add("MERV - XMEV - GGAL - CI");
-            grdDatos.Rows.Add("MERV - XMEV - GGAL - 48hs");
+            grdDatos.Rows.Add("MERV - XMEV - GGAL - 24hs");
 
             foreach (var instrument in instrumentos.Where(i => i.Symbol.EndsWith("24hs")).OrderBy(i => i.Symbol))
             {
@@ -204,7 +204,7 @@ namespace BOTArbitradorPUTs
                             {
                                 offerCI = (decimal)grdDatos.Rows[0].Cells[4].Value;
                             }
-                            if (ticker.Contains("48hs"))
+                            if (ticker.Contains("24hs"))
                             {
                                 offer48 = (decimal)grdDatos.Rows[1].Cells[4].Value;
                             }
