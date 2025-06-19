@@ -30,7 +30,7 @@ namespace BOTArbitradorPUTs
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            this.Text = "BOT Arbitrador de PUTs bajo la par estilo Cuttela - Copyright 2022 Tinchex Capital";
+            this.Text = "BOT Arbitrador de PUTs bajo la par estilo Juancho, DeltaVega & Cabras - Copyright 2022 Tinchex Capital";
             DoubleBuffered = true;
             CheckForIllegalCrossThreadCalls = false;
 
@@ -103,13 +103,14 @@ namespace BOTArbitradorPUTs
             
             tickers = new[] {"MERV - XMEV - GGAL - 24hs",
                 "MERV - XMEV - GGAL - CI",
-                "MERV - XMEV - GFGV6400DI - 24hs",
-                "MERV - XMEV - GFGV6600DI - 24hs",
-                "MERV - XMEV - GFGV6800DI - 24hs",
-                "MERV - XMEV - GFGV7000DI - 24hs",
-                "MERV - XMEV - GFGV7200DI - 24hs",
-                "MERV - XMEV - GFGV7400DI - 24hs",
-                "MERV - XMEV - GFGV7600DI - 24hs"};
+                "MERV - XMEV - GFGV6200AG - 24hs",
+                "MERV - XMEV - GFGV63452G - 24hs",
+                "MERV - XMEV - GFGV65452G - 24hs",
+                "MERV - XMEV - GFGV67452G - 24hs",
+                "MERV - XMEV - GFGV69452G - 24hs",
+                "MERV - XMEV - GFGV71452G - 24hs",
+                "MERV - XMEV - GFGV73452G - 24hs",
+                "MERV - XMEV - GFGV75452G - 24hs"};
             var instrumentos = allInstruments.Where(c => tickers.Contains(c.Symbol));
 
             /*
