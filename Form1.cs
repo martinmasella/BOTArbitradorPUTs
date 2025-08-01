@@ -53,19 +53,19 @@ namespace BOTArbitradorPUTs
 
             grdDatos.Rows.Clear();
             grdDatos.Columns.Add("Ticker", "Ticker");
-            grdDatos.Columns[0].Width = 160;
+            grdDatos.Columns[0].Width = 250;
             grdDatos.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
             grdDatos.Columns.Add("Stamp", "Stamp");
-            grdDatos.Columns[1].Width = 50;
+            grdDatos.Columns[1].Width = 80;
             grdDatos.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             grdDatos.Columns.Add("Bid", "Bid");
             grdDatos.Columns[2].Width = 40;
             grdDatos.Columns[2].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Last", "Last");
-            grdDatos.Columns[3].Width = 50;
+            grdDatos.Columns[3].Width = 70;
             grdDatos.Columns[3].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Ask", "Ask");
-            grdDatos.Columns[4].Width = 50;
+            grdDatos.Columns[4].Width = 70;
             grdDatos.Columns[4].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("AskSize", "Ask Size");
             grdDatos.Columns[5].Width = 30;
@@ -74,16 +74,16 @@ namespace BOTArbitradorPUTs
             grdDatos.Columns[6].Width = 50;
             grdDatos.Columns[6].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Armar", "Armar");
-            grdDatos.Columns[7].Width = 50;
+            grdDatos.Columns[7].Width = 70;
             grdDatos.Columns[7].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Ejercer", "Ejercer");
-            grdDatos.Columns[8].Width = 50;
+            grdDatos.Columns[8].Width = 70;
             grdDatos.Columns[8].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Ratio", "Ratio");
-            grdDatos.Columns[9].Width = 40;
+            grdDatos.Columns[9].Width = 60;
             grdDatos.Columns[9].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Neto", "Neto");
-            grdDatos.Columns[10].Width = 40;
+            grdDatos.Columns[10].Width = 80;
             grdDatos.Columns[10].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.RowHeadersWidth = 4;
         }
@@ -100,17 +100,18 @@ namespace BOTArbitradorPUTs
             var allInstruments = await api.GetAllInstruments();
             var entries = new[] { Entry.Last, Entry.Bids, Entry.Offers };
 
-            
-            tickers = new[] {"MERV - XMEV - GGAL - 24hs",
-                "MERV - XMEV - GGAL - CI",
-                "MERV - XMEV - GFGV6400DI - 24hs",
-                "MERV - XMEV - GFGV6600DI - 24hs",
-                "MERV - XMEV - GFGV6800DI - 24hs",
-                "MERV - XMEV - GFGV7000DI - 24hs",
-                "MERV - XMEV - GFGV7200DI - 24hs",
-                "MERV - XMEV - GFGV7400DI - 24hs",
-                "MERV - XMEV - GFGV7600DI - 24hs"};
-            var instrumentos = allInstruments.Where(c => tickers.Contains(c.Symbol));
+
+			tickers = new[] {"MERV - XMEV - GGAL - 24hs",
+				"MERV - XMEV - GGAL - CI",
+				"MERV - XMEV - GFGV6200AG - 24hs",
+				"MERV - XMEV - GFGV63452G - 24hs",
+				"MERV - XMEV - GFGV65452G - 24hs",
+				"MERV - XMEV - GFGV67452G - 24hs",
+				"MERV - XMEV - GFGV69452G - 24hs",
+				"MERV - XMEV - GFGV71452G - 24hs",
+				"MERV - XMEV - GFGV7324AG - 24hs",
+				"MERV - XMEV - GFGV75452G - 24hs"};
+			var instrumentos = allInstruments.Where(c => tickers.Contains(c.Symbol));
 
             /*
             var instrumentos = allInstruments.Where(c => c.Symbol.StartsWith("MERV - XMEV - GGAL"))

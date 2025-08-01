@@ -16,4 +16,10 @@
     <PackageReference Include="Primary.Net" Version="0.6.3-alpha" />
   </ItemGroup>
 
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
 </Project>
