@@ -30,7 +30,7 @@ namespace BOTArbitradorPUTs
 
         private void frmMain_Load(object sender, EventArgs e)
         {
-            this.Text = "BOT Arbitrador de PUTs bajo la par estilo Cuttela - Copyright 2022 Tinchex Capital";
+            this.Text = "BOT Arbitrador de PUTs bajo la par estilo Juancho, DeltaVega & Cabras - Copyright 2022 Tinchex Capital";
             DoubleBuffered = true;
             CheckForIllegalCrossThreadCalls = false;
 
