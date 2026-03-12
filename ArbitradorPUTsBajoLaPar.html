@@ -1,0 +1,663 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>BOT Arbitrador de PUTs bajo la par</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- DataTables CSS -->
+    <link href="https://cdn.datatables.net/1.13.7/css/dataTables.bootstrap5.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+        }
+        .main-container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        .card-header {
+            background-color: #0d6efd;
+            color: white;
+            font-weight: bold;
+        }
+        .login-section {
+            margin-bottom: 20px;
+        }
+        #dataTable th, #dataTable td {
+            text-align: center;
+            vertical-align: middle;
+            font-size: 0.85rem;
+            padding: 6px 8px;
+        }
+        #dataTable th:first-child, #dataTable td:first-child {
+            text-align: left;
+        }
+        .positive-ratio {
+            color: #198754;
+            font-weight: bold;
+        }
+        .negative-ratio {
+            color: #dc3545;
+            font-weight: bold;
+        }
+        .log-container {
+            max-height: 150px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 0.75rem;
+            background-color: #1e1e1e;
+            color: #00ff00;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        .log-entry {
+            margin-bottom: 2px;
+        }
+        .status-connected {
+            color: #198754;
+        }
+        .status-disconnected {
+            color: #dc3545;
+        }
+        .status-connecting {
+            color: #ffc107;
+        }
+        #connectionStatus {
+            font-weight: bold;
+        }
+        .table-responsive {
+            overflow-x: auto;
+        }
+        .btn-login {
+            min-width: 100px;
+        }
+        .form-label {
+            font-size: 0.875rem;
+            margin-bottom: 0.25rem;
+        }
+        .title-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        .title-header h4 {
+            margin: 0;
+            font-size: 1rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-container">
+        <!-- Title -->
+        <div class="title-header">
+            <h4>BOT Arbitrador de PUTs bajo la par estilo Juancho, DeltaVega & Cabras - Copyright 2022 Tinchex Capital</h4>
+        </div>
+
+        <div class="row">
+            <!-- Login Section -->
+            <div class="col-md-6">
+                <div class="card login-section">
+                    <div class="card-header">
+                        <i class="bi bi-key"></i> Login VETA (Primary)
+                    </div>
+                    <div class="card-body">
+                        <div class="row g-2 align-items-end">
+                            <div class="col-md-4">
+                                <label for="txtUsuarioVETA" class="form-label">Usuario</label>
+                                <input type="text" class="form-control form-control-sm" id="txtUsuarioVETA" placeholder="Usuario">
+                            </div>
+                            <div class="col-md-4">
+                                <label for="txtClaveVETA" class="form-label">Clave</label>
+                                <input type="password" class="form-control form-control-sm" id="txtClaveVETA" placeholder="Clave">
+                            </div>
+                            <div class="col-md-4">
+                                <button id="btnLogin" class="btn btn-primary btn-sm btn-login w-100" onclick="login()">
+                                    <span id="loginSpinner" class="spinner-border spinner-border-sm d-none" role="status"></span>
+                                    <span id="loginText">Login</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <small>Estado: <span id="connectionStatus" class="status-disconnected">Desconectado</span></small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Log Section -->
+            <div class="col-md-6">
+                <div class="card login-section">
+                    <div class="card-header">
+                        <i class="bi bi-list-ul"></i> Log
+                    </div>
+                    <div class="card-body p-2">
+                        <div id="logContainer" class="log-container"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Data Grid -->
+        <div class="card">
+            <div class="card-header">
+                <i class="bi bi-table"></i> Market Data - Arbitraje PUTs GGAL
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table id="dataTable" class="table table-striped table-bordered table-hover" style="width:100%">
+                        <thead class="table-dark">
+                            <tr>
+                                <th>Ticker</th>
+                                <th>Stamp</th>
+                                <th>Bid</th>
+                                <th>Last</th>
+                                <th>Ask</th>
+                                <th>Ask Size</th>
+                                <th>Costo Compra</th>
+                                <th>Armar</th>
+                                <th>Ejercer</th>
+                                <th>Ratio %</th>
+                                <th>Neto</th>
+                            </tr>
+                        </thead>
+                        <tbody id="dataTableBody">
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.7/js/dataTables.bootstrap5.min.js"></script>
+
+    <script>
+        // Configuration
+        // API REST endpoint for authentication
+        const API_URL = 'https://api.veta.xoms.com.ar';
+        // WebSocket endpoint - using matriz.veta.xoms.com.ar as discovered from browser tools
+        const WS_URL = 'wss://matriz.veta.xoms.com.ar/ws';
+
+        // Tickers to subscribe - using the same list as the WinForms app
+        const TICKERS = [
+            "MERV - XMEV - GGAL - 24hs",
+            "MERV - XMEV - GGAL - CI",
+            "MERV - XMEV - GFGV75054F - 24hs",
+            "MERV - XMEV - GFGV77515F - 24hs",
+            "MERV - XMEV - GFGV79054F - 24hs",
+            "MERV - XMEV - GFGV82054F - 24hs",
+            "MERV - XMEV - GFGV85054F - 24hs"
+        ];
+
+        // State
+        let accessToken = null;
+        let websocket = null;
+        let dataTable = null;
+        let marketDataStore = {};
+        let subscriptionSent = false;
+        let isAuthenticated = false;
+
+        // Initialize DataTable
+        $(document).ready(function() {
+            dataTable = $('#dataTable').DataTable({
+                paging: false,
+                searching: false,
+                info: false,
+                ordering: false,
+                autoWidth: false,
+                columns: [
+                    { data: 'ticker', width: '200px' },
+                    { data: 'stamp', width: '80px' },
+                    { data: 'bid', width: '60px' },
+                    { data: 'last', width: '60px' },
+                    { data: 'ask', width: '60px' },
+                    { data: 'askSize', width: '50px' },
+                    { data: 'costoCpra', width: '80px' },
+                    { data: 'armar', width: '80px' },
+                    { data: 'ejercer', width: '80px' },
+                    { data: 'ratio', width: '70px', render: renderRatio },
+                    { data: 'neto', width: '80px' }
+                ]
+            });
+
+            // Initialize rows
+            initializeRows();
+
+            // Load saved credentials if any
+            loadCredentials();
+        });
+
+        function initializeRows() {
+            // First add GGAL CI and 24hs
+            const orderedTickers = [
+                "MERV - XMEV - GGAL - CI",
+                "MERV - XMEV - GGAL - 24hs"
+            ];
+
+            // Then add PUT options sorted
+            const putTickers = TICKERS.filter(t => t.includes('GFGV')).sort();
+            orderedTickers.push(...putTickers);
+
+            orderedTickers.forEach(ticker => {
+                marketDataStore[ticker] = {
+                    ticker: ticker,
+                    stamp: '-',
+                    bid: 0,
+                    last: 0,
+                    ask: 0,
+                    askSize: 0,
+                    costoCpra: 0,
+                    armar: 0,
+                    ejercer: 0,
+                    ratio: 0,
+                    neto: 0
+                };
+                dataTable.row.add(marketDataStore[ticker]);
+            });
+            dataTable.draw();
+        }
+
+        function renderRatio(data, type, row) {
+            if (type === 'display') {
+                const value = parseFloat(data) || 0;
+                const cssClass = value > 0 ? 'positive-ratio' : 'negative-ratio';
+                return `<span class="${cssClass}">${value.toFixed(2)}%</span>`;
+            }
+            return data;
+        }
+
+        function toLog(message) {
+            const now = new Date();
+            const timestamp = now.toLocaleTimeString('es-AR');
+            const logContainer = document.getElementById('logContainer');
+            const entry = document.createElement('div');
+            entry.className = 'log-entry';
+            entry.textContent = `${timestamp}: ${message}`;
+            logContainer.appendChild(entry);
+            logContainer.scrollTop = logContainer.scrollHeight;
+        }
+
+        function setConnectionStatus(status) {
+            const statusElement = document.getElementById('connectionStatus');
+            statusElement.className = '';
+            switch(status) {
+                case 'connected':
+                    statusElement.textContent = 'Conectado';
+                    statusElement.className = 'status-connected';
+                    break;
+                case 'connecting':
+                    statusElement.textContent = 'Conectando...';
+                    statusElement.className = 'status-connecting';
+                    break;
+                case 'disconnected':
+                default:
+                    statusElement.textContent = 'Desconectado';
+                    statusElement.className = 'status-disconnected';
+                    break;
+            }
+        }
+
+        function setLoginLoading(loading) {
+            const spinner = document.getElementById('loginSpinner');
+            const text = document.getElementById('loginText');
+            const btn = document.getElementById('btnLogin');
+            
+            if (loading) {
+                spinner.classList.remove('d-none');
+                text.textContent = 'Conectando...';
+                btn.disabled = true;
+            } else {
+                spinner.classList.add('d-none');
+                text.textContent = 'Login';
+                btn.disabled = false;
+            }
+        }
+
+        function saveCredentials() {
+            const usuario = document.getElementById('txtUsuarioVETA').value;
+            // Don't save password for security
+            localStorage.setItem('vetaUser', usuario);
+        }
+
+        function loadCredentials() {
+            const usuario = localStorage.getItem('vetaUser');
+            if (usuario) {
+                document.getElementById('txtUsuarioVETA').value = usuario;
+            }
+        }
+
+        async function login() {
+            const usuario = document.getElementById('txtUsuarioVETA').value;
+            const clave = document.getElementById('txtClaveVETA').value;
+
+            if (!usuario || !clave) {
+                alert('Por favor ingrese usuario y clave');
+                return;
+            }
+
+            setLoginLoading(true);
+            setConnectionStatus('connecting');
+            toLog('Iniciando login...');
+
+            try {
+                // Login to get token using X-Username and X-Password headers
+                // as per Primary.Net library implementation
+                const response = await fetch(`${API_URL}/auth/getToken`, {
+                    method: 'POST',
+                    headers: {
+                        'X-Username': usuario,
+                        'X-Password': clave
+                    },
+                    body: ''
+                });
+
+                if (!response.ok) {
+                    throw new Error(`Login failed: ${response.status} ${response.statusText}`);
+                }
+
+                // Token comes in the X-Auth-Token header
+                accessToken = response.headers.get('X-Auth-Token');
+                
+                if (!accessToken) {
+                    throw new Error('No se recibi� token de autenticaci�n');
+                }
+                
+                toLog(`Login exitoso. Token: ${accessToken.substring(0, 20)}...`);
+                saveCredentials();
+
+                // Connect WebSocket
+                await connectWebSocket();
+
+            } catch (error) {
+                toLog(`Error en login: ${error.message}`);
+                setConnectionStatus('disconnected');
+                alert(`Error en login: ${error.message}`);
+            } finally {
+                setLoginLoading(false);
+            }
+        }
+
+        async function connectWebSocket() {
+            toLog('Conectando WebSocket...');
+            
+            // Close existing connection if any
+            if (websocket) {
+                websocket.close();
+            }
+
+            subscriptionSent = false;
+            isAuthenticated = false;
+
+            // Generate a random connection ID (similar to what the web app does)
+            const connId = generateRandomId();
+            
+            // Build WebSocket URL with session_id (token) as query parameter
+            // Based on the browser tools inspection: wss://matriz.veta.xoms.com.ar/ws?session_id=...&conn_id=...
+            const wsUrl = `${WS_URL}?session_id=${encodeURIComponent(accessToken)}&conn_id=${encodeURIComponent(connId)}`;
+            
+            toLog(`Conectando a WebSocket...`);
+            console.log('WebSocket URL:', wsUrl);
+
+            try {
+                websocket = new WebSocket(wsUrl);
+            } catch (e) {
+                toLog(`Error creando WebSocket: ${e.message}`);
+                setConnectionStatus('disconnected');
+                return;
+            }
+
+            websocket.onopen = function() {
+                toLog('WebSocket conectado');
+                setConnectionStatus('connected');
+                isAuthenticated = true;
+                
+                // Subscribe to market data immediately
+                subscribeToMarketData();
+            };
+
+            websocket.onmessage = function(event) {
+                try {
+                    const message = JSON.parse(event.data);
+                    handleWebSocketMessage(message);
+                } catch (e) {
+                    console.error('Error parsing message:', e, event.data);
+                    toLog(`Mensaje raw: ${event.data.substring(0, 100)}`);
+                }
+            };
+
+            websocket.onerror = function(error) {
+                toLog(`WebSocket error`);
+                console.error('WebSocket error:', error);
+                setConnectionStatus('disconnected');
+            };
+
+            websocket.onclose = function(event) {
+                toLog(`WebSocket cerrado: ${event.code} ${event.reason || 'Sin raz�n'}`);
+                setConnectionStatus('disconnected');
+                isAuthenticated = false;
+            };
+        }
+
+        function generateRandomId() {
+            // Generate a random base64-like ID similar to what VETA uses
+            const array = new Uint8Array(32);
+            crypto.getRandomValues(array);
+            return btoa(String.fromCharCode.apply(null, array));
+        }
+
+        function subscribeToMarketData() {
+            if (!websocket || websocket.readyState !== WebSocket.OPEN) {
+                toLog('WebSocket no est� conectado');
+                return;
+            }
+
+            if (subscriptionSent) {
+                return;
+            }
+            subscriptionSent = true;
+
+            // Build subscription message according to Primary API
+            // https://apihub.primary.com.ar/assets/apidoc/trading/index.html
+            // Format based on Primary.Net MarketDataInfo structure:
+            // { type: "smd", level: 1, depth: 1, entries: ["BI", "OF", "LA"], products: [...] }
+            
+            const entries = ["BI", "OF", "LA"]; // Bids, Offers, Last
+            
+            // Build products array with marketId and symbol
+            const products = TICKERS.map(ticker => ({
+                marketId: "ROFX",
+                symbol: ticker
+            }));
+
+            // Send single subscription message for all instruments (as Primary.Net does)
+            const subscribeMessage = {
+                type: "smd",
+                level: 1,
+                depth: 1,
+                entries: entries,
+                products: products
+            };
+            
+            const messageJson = JSON.stringify(subscribeMessage);
+            toLog(`Enviando suscripci�n...`);
+            console.log('Subscription message:', messageJson);
+            websocket.send(messageJson);
+            
+            toLog(`Suscrito a ${products.length} instrumentos`);
+        }
+
+        function handleWebSocketMessage(message) {
+            console.log('Message received:', message);
+            
+            // Handle different message types from Primary API
+            if (message.type === 'Md' || message.type === 'md') {
+                processMarketData(message);
+            } else if (message.status === 'OK') {
+                toLog('Respuesta OK del servidor');
+            } else if (message.status === 'ERROR') {
+                toLog(`Error: ${message.description || message.message || 'Unknown'}`);
+            } else if (message.instrumentId || message.marketData) {
+                // Alternative format - direct market data
+                processMarketData(message);
+            } else if (message.timestamp && message.instrumentId) {
+                // Market data format
+                processMarketData(message);
+            } else {
+                // Log unknown message types for debugging
+                console.log('Unknown message type:', message);
+                toLog(`Msg: ${JSON.stringify(message).substring(0, 80)}`);
+            }
+        }
+
+        function processMarketData(data) {
+            // Extract ticker from the message
+            let ticker = '';
+            if (data.instrumentId && data.instrumentId.symbol) {
+                ticker = data.instrumentId.symbol;
+            } else if (data.symbol) {
+                ticker = data.symbol;
+            }
+
+            if (!ticker || !marketDataStore[ticker]) {
+                return;
+            }
+
+            const marketData = data.marketData || data.md || data;
+            
+            // Extract values
+            let bid = 0, bidSize = 0, ask = 0, askSize = 0, last = 0;
+            
+            // Handle BIDS
+            if (marketData.BI && marketData.BI.length > 0) {
+                bid = marketData.BI[0].price || 0;
+                bidSize = marketData.BI[0].size || 0;
+            }
+            
+            // Handle OFFERS
+            if (marketData.OF && marketData.OF.length > 0) {
+                ask = marketData.OF[0].price || 0;
+                askSize = marketData.OF[0].size || 0;
+            }
+            
+            // Handle LAST
+            if (marketData.LA) {
+                last = marketData.LA.price || 0;
+            }
+
+            // Get timestamp
+            const timestamp = data.timestamp || Date.now();
+            const dt = new Date(typeof timestamp === 'number' && timestamp > 1e12 ? timestamp : timestamp * 1000);
+            const stamp = dt.toLocaleTimeString('es-AR');
+
+            toLog(`${ticker.substring(14)}`);
+
+            // Update store
+            const row = marketDataStore[ticker];
+            row.stamp = stamp;
+            row.bid = bid;
+            row.last = last;
+            row.ask = ask;
+            row.askSize = askSize;
+
+            // Calculate costs based on instrument type
+            if (ticker.includes('GGAL') && !ticker.includes('GFGV')) {
+                // Spot GGAL - 0.22% commission
+                row.costoCpra = (ask / 100 * 0.22) + ask;
+            } else if (ticker.includes('GFGV')) {
+                // PUT options - 0.37% commission
+                row.costoCpra = (ask / 100 * 0.37) + ask;
+                
+                // Extract strike price from ticker (e.g., GFGV75054F -> 7505)
+                const match = ticker.match(/GFGV(\d{4,5})/);
+                if (match) {
+                    const strikeRaw = parseInt(match[1]);
+                    // Determine strike value (check if 4 or 5 digits)
+                    const strike = strikeRaw < 10000 ? strikeRaw : strikeRaw / 10;
+                    // Ejercer = strike * 1.0022 (exercise cost with 0.22% commission)
+                    row.ejercer = (strike * 1.0022).toFixed(2);
+                }
+            }
+
+            // Recalculate ALL rows when any data arrives (FIX for the original issue)
+            recalculateAllRows();
+
+            // Redraw the table
+            refreshTable();
+        }
+
+        function recalculateAllRows() {
+            // Get GGAL 24hs cost (used as base for "Armar")
+            const ggal24hs = marketDataStore["MERV - XMEV - GGAL - 24hs"];
+            const ggal24hsCosto = ggal24hs ? parseFloat(ggal24hs.costoCpra) || 0 : 0;
+
+            // Iterate through all PUT options and recalculate
+            Object.keys(marketDataStore).forEach(ticker => {
+                const row = marketDataStore[ticker];
+                
+                if (ticker.includes('GFGV')) {
+                    // Armar = PUT cost + GGAL 24hs cost
+                    const putCosto = parseFloat(row.costoCpra) || 0;
+                    const armar = putCosto + ggal24hsCosto;
+                    row.armar = armar.toFixed(2);
+
+                    // Calculate ratio and neto
+                    const ejercer = parseFloat(row.ejercer) || 0;
+                    
+                    if (armar > 0) {
+                        // Ratio = ((ejercer / armar) - 1) * 100
+                        const ratio = ((ejercer / armar) - 1) * 100;
+                        row.ratio = ratio.toFixed(2);
+                        
+                        // Neto = ejercer - armar
+                        const neto = ejercer - armar;
+                        row.neto = neto.toFixed(2);
+                    } else {
+                        row.ratio = 0;
+                        row.neto = 0;
+                    }
+                }
+            });
+        }
+
+        function refreshTable() {
+            // Clear and reload data
+            dataTable.clear();
+            
+            // Add rows in order: GGAL CI, GGAL 24hs, then PUTs
+            const orderedTickers = [
+                "MERV - XMEV - GGAL - CI",
+                "MERV - XMEV - GGAL - 24hs"
+            ];
+            const putTickers = Object.keys(marketDataStore)
+                .filter(t => t.includes('GFGV'))
+                .sort();
+            orderedTickers.push(...putTickers);
+
+            orderedTickers.forEach(ticker => {
+                if (marketDataStore[ticker]) {
+                    dataTable.row.add(marketDataStore[ticker]);
+                }
+            });
+
+            dataTable.draw(false);
+        }
+
+        // Handle page unload
+        window.onbeforeunload = function() {
+            if (websocket) {
+                websocket.close();
+            }
+        };
+    </script>
+</body>
+</html>

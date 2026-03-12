@@ -45,6 +45,7 @@ namespace BOTArbitradorPUTs
                 txtClaveIOL.Text = configuracion.GetSection("MiConfiguracion:ClaveIOL").Value;
                 txtUsuarioVETA.Text = configuracion.GetSection("MiConfiguracion:UserVETA").Value;
                 txtClaveVETA.Text = configuracion.GetSection("MiConfiguracion:ClaveVETA").Value;
+                tickers = configuracion.GetSection("MiConfiguracion:TickersPUT").Get<string[]>() ?? Array.Empty<string>();
             }
             catch (Exception ex)
             {
@@ -53,13 +54,13 @@ namespace BOTArbitradorPUTs
 
             grdDatos.Rows.Clear();
             grdDatos.Columns.Add("Ticker", "Ticker");
-            grdDatos.Columns[0].Width = 250;
-            grdDatos.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleLeft;
+            grdDatos.Columns[0].Width = 320;
+            grdDatos.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             grdDatos.Columns.Add("Stamp", "Stamp");
-            grdDatos.Columns[1].Width = 80;
+            grdDatos.Columns[1].Width = 90;
             grdDatos.Columns[1].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             grdDatos.Columns.Add("Bid", "Bid");
-            grdDatos.Columns[2].Width = 40;
+            grdDatos.Columns[2].Width = 70;
             grdDatos.Columns[2].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Last", "Last");
             grdDatos.Columns[3].Width = 70;
@@ -68,24 +69,26 @@ namespace BOTArbitradorPUTs
             grdDatos.Columns[4].Width = 70;
             grdDatos.Columns[4].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("AskSize", "Ask Size");
-            grdDatos.Columns[5].Width = 30;
+            grdDatos.Columns[5].Width = 70;
             grdDatos.Columns[5].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("CostCpra", "Costo Compra");
-            grdDatos.Columns[6].Width = 50;
+            grdDatos.Columns[6].Width = 90;
             grdDatos.Columns[6].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Armar", "Armar");
-            grdDatos.Columns[7].Width = 70;
+            grdDatos.Columns[7].Width = 90;
             grdDatos.Columns[7].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Ejercer", "Ejercer");
-            grdDatos.Columns[8].Width = 70;
+            grdDatos.Columns[8].Width = 90;
             grdDatos.Columns[8].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Ratio", "Ratio");
             grdDatos.Columns[9].Width = 60;
             grdDatos.Columns[9].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Neto", "Neto");
-            grdDatos.Columns[10].Width = 80;
+            grdDatos.Columns[10].Width = 90;
             grdDatos.Columns[10].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.RowHeadersWidth = 4;
+
+            cmbUmbral.Text = "0,2";
         }
 
         private void btnLogin_Click(object sender, EventArgs e)
@@ -101,15 +104,6 @@ namespace BOTArbitradorPUTs
             var entries = new[] { Entry.Last, Entry.Bids, Entry.Offers };
 
 
-			tickers = new[] {
-                "MERV - XMEV - GGAL - 24hs",
-                "MERV - XMEV - GGAL - CI",
-                "MERV - XMEV - GFGV75054F - 24hs",
-                "MERV - XMEV - GFGV77515F - 24hs",
-                "MERV - XMEV - GFGV79054F - 24hs",
-                "MERV - XMEV - GFGV82054F - 24hs",
-                "MERV - XMEV - GFGV85054F - 24hs"
-            };
 			var instrumentos = allInstruments.Where(c => tickers.Contains(c.Symbol));
 
             /*
@@ -118,11 +112,14 @@ namespace BOTArbitradorPUTs
             */
 
             grdDatos.Rows.Add("MERV - XMEV - GGAL - CI");
+            grdDatos.Rows[grdDatos.Rows.Count - 1].Cells[0].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
             grdDatos.Rows.Add("MERV - XMEV - GGAL - 24hs");
+            grdDatos.Rows[grdDatos.Rows.Count - 1].Cells[0].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
 
             foreach (var instrument in instrumentos.Where(i => i.Symbol.EndsWith("24hs")).OrderBy(i => i.Symbol))
             {
                 grdDatos.Rows.Add(instrument.Symbol);
+                grdDatos.Rows[grdDatos.Rows.Count - 1].Cells[0].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
                 grdDatos.Rows[grdDatos.Rows.Count - 1].Cells[0].Style.WrapMode=DataGridViewTriState.True;
             }
 
@@ -195,7 +192,7 @@ namespace BOTArbitradorPUTs
                         row.Cells[2].Value = Math.Round(bid,2);
                         row.Cells[3].Value = Math.Round(last,2);
                         row.Cells[4].Value = Math.Round(offer,2);
-                        row.Cells[5].Value = offerSize;
+                        row.Cells[5].Value = Math.Round(offerSize, 2);
 
                         if (ticker.Contains("GGAL"))
                         {
@@ -215,18 +212,18 @@ namespace BOTArbitradorPUTs
                             strike = decimal.Parse(row.Cells[0].Value.ToString().Substring(18, 4)) / 1;
                             //strike = decimal.Parse(row.Cells[0].Value.ToString().Substring(18, 5)) / 10;
                             //strike = decimal.Parse(row.Cells[0].Value.ToString().Substring(18, 3)) / 1;
-                            ejercer = strike * (decimal)1.0022;
-                            row.Cells[8].Value = ejercer;
+                            ejercer = Math.Round(strike * (decimal)1.0022, 2);
+                            row.Cells[8].Value = Math.Round(ejercer, 2);
                         }
 
-                        row.Cells[6].Value = costo + offer;
+                        row.Cells[6].Value = Math.Round(costo + offer, 2);
 
                         //CI o 48hs
                         if (grdDatos.Rows[1].Cells[6].Value != null)
                         {
                             armar = (decimal)row.Cells[6].Value + (decimal)grdDatos.Rows[1].Cells[6].Value;
                         }
-                        row.Cells[7].Value = armar;
+                        row.Cells[7].Value = Math.Round(armar, 2);
                         if (armar == 0)
                         {
                             ratio = 0;
@@ -236,18 +233,26 @@ namespace BOTArbitradorPUTs
                             ratio = Math.Round(((ejercer / armar) - 1) * 100,2);
                         }
                         row.Cells[9].Value = ratio;
-                        neto = Math.Round(ejercer - armar,2);
+                        neto = Math.Round(ejercer - armar, 2);
                         row.Cells[10].Value = neto;
                         if (ratio>0)
                         {
-                            row.Cells[9].Style.ForeColor = Color.DarkGreen;
+                            row.Cells[9].Style.ForeColor = Color.LightGreen;
+                            row.Cells[9].Style.Font = new Font(grdDatos.Font, FontStyle.Bold);
                         }
                         else
                         { 
                             row.Cells[9].Style.ForeColor = Color.Red;
+                            row.Cells[9].Style.Font = new Font(grdDatos.Font, FontStyle.Regular);
                         }
 
                     }
+                }
+
+                // Si llegó un dato de GGAL, recalcular todos los PUTs
+                if (ticker.Contains("GGAL"))
+                {
+                    RecalcularPUTs();
                 }
 
                 try
@@ -261,6 +266,57 @@ namespace BOTArbitradorPUTs
             }
             Application.DoEvents();
         }
+        private void RecalcularPUTs()
+        {
+            // Recalcular todos los PUTs cuando cambia el valor de GGAL
+            for (int i = 2; i < grdDatos.Rows.Count; i++) // Empezamos desde la fila 2 (después de GGAL CI y 24hs)
+            {
+                var row = grdDatos.Rows[i];
+                var tickerRow = row.Cells[0].Value?.ToString();
+                
+                if (tickerRow != null && tickerRow.Contains("GFGV"))
+                {
+                    // Solo recalcular si ya tiene datos de offer (columna 4)
+                    if (row.Cells[4].Value != null && row.Cells[6].Value != null && grdDatos.Rows[1].Cells[6].Value != null)
+                    {
+                        var costoCompra = (decimal)row.Cells[6].Value;
+                        var costoGGAL = (decimal)grdDatos.Rows[1].Cells[6].Value;
+                        var armar = costoCompra + costoGGAL;
+                        row.Cells[7].Value = Math.Round(armar, 2);
+
+                        // Recalcular ratio y neto si tenemos el valor de ejercer
+                        if (row.Cells[8].Value != null)
+                        {
+                            var ejercer = Math.Round((decimal)row.Cells[8].Value, 2);
+                            decimal ratio;
+                            if (armar == 0)
+                            {
+                                ratio = 0;
+                            }
+                            else
+                            {
+                                ratio = Math.Round(((ejercer / armar) - 1) * 100, 2);
+                            }
+                            row.Cells[9].Value = ratio;
+                            var neto = Math.Round(ejercer - armar, 2);
+                            row.Cells[10].Value = neto;
+
+                            if (ratio > 0)
+                            {
+                                row.Cells[9].Style.ForeColor = Color.LightGreen;
+                                row.Cells[9].Style.Font = new Font(grdDatos.Font, FontStyle.Bold);
+                            }
+                            else
+                            {
+                                row.Cells[9].Style.ForeColor = Color.Red;
+                                row.Cells[9].Style.Font = new Font(grdDatos.Font, FontStyle.Regular);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
         private void ToLog(string s)
         {
             lbLog.Items.Add(DateTime.Now.ToString("T") + ": " + s);
