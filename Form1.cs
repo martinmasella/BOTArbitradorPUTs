@@ -110,17 +110,7 @@ namespace BOTArbitradorPUTs
                 ToLog("IOL: Login exitoso");
 
                 // Obtener liquidez disponible en plazo t1 (24hs)
-                var liquidez = await iolClient.ObtenerLiquidezAsync("t1");
-                if (liquidez.HasValue)
-                {
-                    txtLiquidez.Text = liquidez.Value.ToString("N2");
-                    ToLog($"IOL: Liquidez t1 = ${liquidez.Value:N2}");
-                }
-                else
-                {
-                    txtLiquidez.Text = "N/D";
-                    ToLog("IOL: No se pudo obtener la liquidez");
-                }
+                await RefrescarLiquidez();
             }
             else
                 ToLog("IOL: Error en login");
@@ -368,6 +358,23 @@ namespace BOTArbitradorPUTs
             }
         }
 
+        private async Task RefrescarLiquidez()
+        {
+            if (iolClient == null || !iolClient.EstaAutenticado) return;
+
+            var liquidez = await iolClient.ObtenerLiquidezAsync("t1");
+            if (liquidez.HasValue)
+            {
+                txtLiquidez.Text = liquidez.Value.ToString("N2");
+                ToLog($"IOL: Liquidez t1 actualizada = ${liquidez.Value:N2}");
+            }
+            else
+            {
+                txtLiquidez.Text = "N/D";
+                ToLog("IOL: No se pudo actualizar la liquidez");
+            }
+        }
+
         /// <summary>
         /// Ejecuta el arbitraje: compra PUTs + compra GGAL 24hs en paralelo.
         /// Por cada contrato de PUT se compran 100 acciones GGAL.
@@ -421,6 +428,9 @@ namespace BOTArbitradorPUTs
                     ToLog($"  >>> ARBITRAJE ARMADO OK");
                 else
                     ToLog($"  >>> ATENCION: Revisar órdenes manualmente");
+
+                // Volver a obtener la liquidez después de completar la compra
+                await RefrescarLiquidez();
             }
             catch (Exception ex)
             {
