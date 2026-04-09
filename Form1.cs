@@ -245,7 +245,11 @@ namespace BOTArbitradorPUTs
                             armar = (row.Cells[6].Value as decimal? ?? 0m) + (grdDatos.Rows[0].Cells[6].Value as decimal? ?? 0m);
                         }
                         row.Cells[7].Value = Math.Round(armar, 2);
-                        if (armar == 0)
+                        if (ticker.Contains("GFGV") && offer == 0)
+                        {
+                            ratio = 0;
+                        }
+                        else if (armar == 0)
                         {
                             ratio = 0;
                         }
@@ -318,7 +322,12 @@ namespace BOTArbitradorPUTs
                         {
                             var ejercer = Math.Round(row.Cells[8].Value as decimal? ?? 0m, 2);
                             decimal ratio;
-                            if (armar == 0)
+                            var askPut = row.Cells[4].Value as decimal? ?? 0m;
+                            if (askPut == 0)
+                            {
+                                ratio = 0;
+                            }
+                            else if (armar == 0)
                             {
                                 ratio = 0;
                             }
