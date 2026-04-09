@@ -137,6 +137,61 @@ namespace BOTArbitradorPUTs
             }
         }
 
+        /// <summary>
+        /// Obtiene la liquidez (saldo disponible) para el plazo indicado desde el estado de cuenta.
+        /// GET /api/v2/estadocuenta
+        /// </summary>
+        /// <param name="plazo">Plazo: "t0" (CI), "t1" (24hs) o "t2" (48hs)</param>
+        /// <returns>Saldo disponible en pesos para el plazo, o null si hubo error</returns>
+        public async Task<decimal?> ObtenerLiquidezAsync(string plazo = "t1")
+        {
+            await AsegurarTokenAsync();
+
+            var response = await _http.GetAsync("/api/v2/estadocuenta");
+            if (!response.IsSuccessStatusCode)
+                return null;
+
+            var responseBody = await response.Content.ReadAsStringAsync();
+            var json = JObject.Parse(responseBody);
+
+            // La respuesta tiene "cuentas" con array de cuentas.
+            // Cada cuenta tiene "tipo" ("inversion_Argentina_Pesos", etc.) y "saldos" array.
+            // Cada saldo tiene "liquidacion" ("inmediata", "hrs24", "hrs48") y "disponible".
+            var cuentas = json["cuentas"] as JArray;
+            if (cuentas == null)
+                return null;
+
+            // Mapeo de plazo a liquidación
+            var liquidacion = plazo switch
+            {
+                "t0" => "inmediata",
+                "t1" => "hrs24",
+                "t2" => "hrs48",
+                _ => "hrs24"
+            };
+
+            foreach (var cuenta in cuentas)
+            {
+                var tipo = cuenta["tipo"]?.ToString() ?? "";
+                if (!tipo.Contains("Pesos", StringComparison.OrdinalIgnoreCase))
+                    continue;
+
+                var saldos = cuenta["saldos"] as JArray;
+                if (saldos == null)
+                    continue;
+
+                foreach (var saldo in saldos)
+                {
+                    if (string.Equals(saldo["liquidacion"]?.ToString(), liquidacion, StringComparison.OrdinalIgnoreCase))
+                    {
+                        return saldo["disponibleOperar"]?.Value<decimal>() ?? 0m;
+                    }
+                }
+            }
+
+            return null;
+        }
+
         public void Dispose()
         {
             _http?.Dispose();

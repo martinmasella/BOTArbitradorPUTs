@@ -50,6 +50,7 @@ namespace BOTArbitradorPUTs
                 txtUsuarioVETA.Text = configuracion.GetSection("MiConfiguracion:UserVETA").Value;
                 txtClaveVETA.Text = configuracion.GetSection("MiConfiguracion:ClaveVETA").Value;
                 tickers = configuracion.GetSection("MiConfiguracion:TickersPUT").Get<string[]>() ?? Array.Empty<string>();
+                txtLimite.Text = configuracion.GetSection("MiConfiguracion:Limite").Value ?? "900000";
             }
             catch (Exception ex)
             {
@@ -105,7 +106,22 @@ namespace BOTArbitradorPUTs
             iolClient = new IOLClient();
             var loginIOL = await iolClient.LoginAsync(txtUsuarioIOL.Text, txtClaveIOL.Text);
             if (loginIOL)
+            {
                 ToLog("IOL: Login exitoso");
+
+                // Obtener liquidez disponible en plazo t1 (24hs)
+                var liquidez = await iolClient.ObtenerLiquidezAsync("t1");
+                if (liquidez.HasValue)
+                {
+                    txtLiquidez.Text = liquidez.Value.ToString("N2");
+                    ToLog($"IOL: Liquidez t1 = ${liquidez.Value:N2}");
+                }
+                else
+                {
+                    txtLiquidez.Text = "N/D";
+                    ToLog("IOL: No se pudo obtener la liquidez");
+                }
+            }
             else
                 ToLog("IOL: Error en login");
 
@@ -124,8 +140,10 @@ namespace BOTArbitradorPUTs
                 .Concat(allInstruments.Where(c => c.Symbol.StartsWith("MERV - XMEV - GFG")));
             */
 
+            /*
             grdDatos.Rows.Add("MERV - XMEV - GGAL - CI");
             grdDatos.Rows[grdDatos.Rows.Count - 1].Cells[0].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
+            */
             grdDatos.Rows.Add("MERV - XMEV - GGAL - 24hs");
             grdDatos.Rows[grdDatos.Rows.Count - 1].Cells[0].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
 
@@ -212,11 +230,11 @@ namespace BOTArbitradorPUTs
                             costo = offer / 100 * (decimal)0.22;
                             if (ticker.Contains("CI"))
                             {
-                                offerCI = (decimal)grdDatos.Rows[0].Cells[4].Value;
+                                offerCI = grdDatos.Rows[0].Cells[4].Value as decimal? ?? 0m;
                             }
                             if (ticker.Contains("24hs"))
                             {
-                                offer48 = (decimal)grdDatos.Rows[1].Cells[4].Value;
+                                offer48 = grdDatos.Rows[0].Cells[4].Value as decimal? ?? 0m;
                             }
                         }
                         else
@@ -232,9 +250,9 @@ namespace BOTArbitradorPUTs
                         row.Cells[6].Value = Math.Round(costo + offer, 2);
 
                         //CI o 48hs
-                        if (grdDatos.Rows[1].Cells[6].Value != null)
+                        if (grdDatos.Rows[0].Cells[6].Value != null)
                         {
-                            armar = (decimal)row.Cells[6].Value + (decimal)grdDatos.Rows[1].Cells[6].Value;
+                            armar = (row.Cells[6].Value as decimal? ?? 0m) + (grdDatos.Rows[0].Cells[6].Value as decimal? ?? 0m);
                         }
                         row.Cells[7].Value = Math.Round(armar, 2);
                         if (armar == 0)
@@ -299,16 +317,16 @@ namespace BOTArbitradorPUTs
 
                 if (tickerRow != null && tickerRow.Contains("GFGV"))
                 {
-                    if (row.Cells[4].Value != null && row.Cells[6].Value != null && grdDatos.Rows[1].Cells[6].Value != null)
+                    if (row.Cells[4].Value != null && row.Cells[6].Value != null && grdDatos.Rows[0].Cells[6].Value != null)
                     {
-                        var costoCompra = (decimal)row.Cells[6].Value;
-                        var costoGGAL = (decimal)grdDatos.Rows[1].Cells[6].Value;
+                        var costoCompra = row.Cells[6].Value as decimal? ?? 0m;
+                        var costoGGAL = grdDatos.Rows[0].Cells[6].Value as decimal? ?? 0m;
                         var armar = costoCompra + costoGGAL;
                         row.Cells[7].Value = Math.Round(armar, 2);
 
                         if (row.Cells[8].Value != null)
                         {
-                            var ejercer = Math.Round((decimal)row.Cells[8].Value, 2);
+                            var ejercer = Math.Round(row.Cells[8].Value as decimal? ?? 0m, 2);
                             decimal ratio;
                             if (armar == 0)
                             {
@@ -337,8 +355,8 @@ namespace BOTArbitradorPUTs
                             if (chkAuto.Checked && ratio > 0 && row.Cells[5].Value != null)
                             {
                                 var umbralConfig = decimal.Parse(cmbUmbral.Text);
-                                var offerSize = (decimal)row.Cells[5].Value;
-                                var offerPut = (decimal)row.Cells[4].Value;
+                                var offerSize = row.Cells[5].Value as decimal? ?? 0m;
+                                var offerPut = row.Cells[4].Value as decimal? ?? 0m;
                                 if (ratio >= umbralConfig && offerSize > 0)
                                 {
                                     await EjecutarArbitraje(tickerRow, (int)offerSize, offerPut, ratio);
@@ -374,7 +392,7 @@ namespace BOTArbitradorPUTs
                 var simboloPut = partes.Length >= 3 ? partes[2].Trim() : tickerPut;
 
                 int cantidadAcciones = cantidadContratos * 100;
-                var precioGGAL = grdDatos.Rows[1].Cells[4].Value != null ? (decimal)grdDatos.Rows[1].Cells[4].Value : 0m;
+                var precioGGAL = grdDatos.Rows[0].Cells[4].Value as decimal? ?? 0m;
 
                 if (precioGGAL == 0)
                 {
