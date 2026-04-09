@@ -23,6 +23,10 @@ namespace BOTArbitradorPUTs
         double timeOffset;
         string[] tickers;
 
+        private IOLClient iolClient;
+        private bool operacionEnCurso = false;
+        private readonly HashSet<string> putsOperados = new();
+
         public frmMain()
         {
             InitializeComponent();
@@ -97,6 +101,15 @@ namespace BOTArbitradorPUTs
         }
         public async Task Inicio()
         {
+            // Login IOL
+            iolClient = new IOLClient();
+            var loginIOL = await iolClient.LoginAsync(txtUsuarioIOL.Text, txtClaveIOL.Text);
+            if (loginIOL)
+                ToLog("IOL: Login exitoso");
+            else
+                ToLog("IOL: Error en login");
+
+            // Login VETA
             var api = new Api(new Uri(sURLVETA));
             await api.Login(txtUsuarioVETA.Text, txtClaveVETA.Text);
 
@@ -255,6 +268,16 @@ namespace BOTArbitradorPUTs
                     RecalcularPUTs();
                 }
 
+                // Evaluar arbitraje para PUTs
+                if (ticker.Contains("GFGV") && chkAuto.Checked && ratio > 0)
+                {
+                    var umbralConfig = decimal.Parse(cmbUmbral.Text);
+                    if (ratio >= umbralConfig && offerSize > 0)
+                    {
+                        await EjecutarArbitraje(ticker, (int)offerSize, offer, ratio);
+                    }
+                }
+
                 try
                 {
 
@@ -266,17 +289,16 @@ namespace BOTArbitradorPUTs
             }
             Application.DoEvents();
         }
-        private void RecalcularPUTs()
+        private async void RecalcularPUTs()
         {
             // Recalcular todos los PUTs cuando cambia el valor de GGAL
-            for (int i = 2; i < grdDatos.Rows.Count; i++) // Empezamos desde la fila 2 (después de GGAL CI y 24hs)
+            for (int i = 2; i < grdDatos.Rows.Count; i++)
             {
                 var row = grdDatos.Rows[i];
                 var tickerRow = row.Cells[0].Value?.ToString();
-                
+
                 if (tickerRow != null && tickerRow.Contains("GFGV"))
                 {
-                    // Solo recalcular si ya tiene datos de offer (columna 4)
                     if (row.Cells[4].Value != null && row.Cells[6].Value != null && grdDatos.Rows[1].Cells[6].Value != null)
                     {
                         var costoCompra = (decimal)row.Cells[6].Value;
@@ -284,7 +306,6 @@ namespace BOTArbitradorPUTs
                         var armar = costoCompra + costoGGAL;
                         row.Cells[7].Value = Math.Round(armar, 2);
 
-                        // Recalcular ratio y neto si tenemos el valor de ejercer
                         if (row.Cells[8].Value != null)
                         {
                             var ejercer = Math.Round((decimal)row.Cells[8].Value, 2);
@@ -311,9 +332,85 @@ namespace BOTArbitradorPUTs
                                 row.Cells[9].Style.ForeColor = Color.Red;
                                 row.Cells[9].Style.Font = new Font(grdDatos.Font, FontStyle.Regular);
                             }
+
+                            // Evaluar arbitraje al recalcular desde GGAL
+                            if (chkAuto.Checked && ratio > 0 && row.Cells[5].Value != null)
+                            {
+                                var umbralConfig = decimal.Parse(cmbUmbral.Text);
+                                var offerSize = (decimal)row.Cells[5].Value;
+                                var offerPut = (decimal)row.Cells[4].Value;
+                                if (ratio >= umbralConfig && offerSize > 0)
+                                {
+                                    await EjecutarArbitraje(tickerRow, (int)offerSize, offerPut, ratio);
+                                }
+                            }
                         }
                     }
                 }
+            }
+        }
+
+        /// <summary>
+        /// Ejecuta el arbitraje: compra PUTs + compra GGAL 24hs en paralelo.
+        /// Por cada contrato de PUT se compran 100 acciones GGAL.
+        /// </summary>
+        private async Task EjecutarArbitraje(string tickerPut, int cantidadContratos, decimal precioPut, decimal ratio)
+        {
+            if (operacionEnCurso) return;
+            if (putsOperados.Contains(tickerPut)) return;
+            if (iolClient == null || !iolClient.EstaAutenticado)
+            {
+                ToLog("IOL: No autenticado, no se puede operar");
+                return;
+            }
+
+            operacionEnCurso = true;
+            putsOperados.Add(tickerPut);
+
+            try
+            {
+                // Extraer símbolo corto del PUT (ej: "MERV - XMEV - GFGV75029A - 24hs" -> "GFGV75029A")
+                var partes = tickerPut.Split(" - ");
+                var simboloPut = partes.Length >= 3 ? partes[2].Trim() : tickerPut;
+
+                int cantidadAcciones = cantidadContratos * 100;
+                var precioGGAL = grdDatos.Rows[1].Cells[4].Value != null ? (decimal)grdDatos.Rows[1].Cells[4].Value : 0m;
+
+                if (precioGGAL == 0)
+                {
+                    ToLog($"ARBITRAJE CANCELADO: Sin precio de GGAL");
+                    operacionEnCurso = false;
+                    return;
+                }
+
+                var validez = DateTime.Now.Date;
+
+                ToLog($">>> ARBITRAJE: {simboloPut} x{cantidadContratos} @ {precioPut} + GGAL x{cantidadAcciones} @ {precioGGAL} (ratio {ratio}%)");
+
+                // Enviar ambas órdenes en paralelo
+                var taskPut = iolClient.ComprarAsync("bCBA", simboloPut, cantidadContratos, precioPut, "t1", validez);
+                var taskGGAL = iolClient.ComprarAsync("bCBA", "GGAL", cantidadAcciones, precioGGAL, "t1", validez);
+
+                var resultados = await Task.WhenAll(taskPut, taskGGAL);
+
+                var resPut = resultados[0];
+                var resGGAL = resultados[1];
+
+                ToLog($"  PUT  {simboloPut}: {resPut.Mensaje}");
+                ToLog($"  GGAL x{cantidadAcciones}: {resGGAL.Mensaje}");
+
+                if (resPut.Exitosa && resGGAL.Exitosa)
+                    ToLog($"  >>> ARBITRAJE ARMADO OK");
+                else
+                    ToLog($"  >>> ATENCION: Revisar órdenes manualmente");
+            }
+            catch (Exception ex)
+            {
+                ToLog($"ARBITRAJE ERROR: {ex.Message}");
+            }
+            finally
+            {
+                operacionEnCurso = false;
             }
         }
 
