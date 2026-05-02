@@ -122,7 +122,6 @@ namespace BOTArbitradorPUTs
             var allInstruments = await api.GetAllInstruments();
             var entries = new[] { Entry.Last, Entry.Bids, Entry.Offers };
 
-
 			var instrumentos = allInstruments.Where(c => tickers.Contains(c.Symbol));
 
             /*
@@ -130,14 +129,13 @@ namespace BOTArbitradorPUTs
                 .Concat(allInstruments.Where(c => c.Symbol.StartsWith("MERV - XMEV - GFG")));
             */
 
-            /*
             grdDatos.Rows.Add("MERV - XMEV - GGAL - CI");
             grdDatos.Rows[grdDatos.Rows.Count - 1].Cells[0].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
-            */
+            /*
             grdDatos.Rows.Add("MERV - XMEV - GGAL - 24hs");
             grdDatos.Rows[grdDatos.Rows.Count - 1].Cells[0].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
-
-            foreach (var instrument in instrumentos.Where(i => i.Symbol.EndsWith("24hs")).OrderBy(i => i.Symbol))
+            */
+            foreach (var instrument in instrumentos.Where(i => i.Symbol.EndsWith("CI")).OrderBy(i => i.Symbol))
             {
                 grdDatos.Rows.Add(instrument.Symbol);
                 grdDatos.Rows[grdDatos.Rows.Count - 1].Cells[0].Style.Alignment = DataGridViewContentAlignment.MiddleRight;
@@ -202,7 +200,7 @@ namespace BOTArbitradorPUTs
 
                 ToLog($"{ticker}");
 
-                //Actualización de grilla
+                //Actualizaciï¿½n de grilla
 
                 for (int i = 0; i < grdDatos.Rows.Count; i++)
                 {
@@ -274,7 +272,7 @@ namespace BOTArbitradorPUTs
                     }
                 }
 
-                // Si llegó un dato de GGAL, recalcular todos los PUTs
+                // Si llegï¿½ un dato de GGAL, recalcular todos los PUTs
                 if (ticker.Contains("GGAL"))
                 {
                     RecalcularPUTs();
@@ -403,7 +401,7 @@ namespace BOTArbitradorPUTs
 
             try
             {
-                // Extraer símbolo corto del PUT (ej: "MERV - XMEV - GFGV75029A - 24hs" -> "GFGV75029A")
+                // Extraer sï¿½mbolo corto del PUT (ej: "MERV - XMEV - GFGV75029A - 24hs" -> "GFGV75029A")
                 var partes = tickerPut.Split(" - ");
                 var simboloPut = partes.Length >= 3 ? partes[2].Trim() : tickerPut;
 
@@ -421,7 +419,7 @@ namespace BOTArbitradorPUTs
 
                 ToLog($">>> ARBITRAJE: {simboloPut} x{cantidadContratos} @ {precioPut} + GGAL x{cantidadAcciones} @ {precioGGAL} (ratio {ratio}%)");
 
-                // Enviar ambas órdenes en paralelo
+                // Enviar ambas ï¿½rdenes en paralelo
                 var taskPut = iolClient.ComprarAsync("bCBA", simboloPut, cantidadContratos, precioPut, "t1", validez);
                 var taskGGAL = iolClient.ComprarAsync("bCBA", "GGAL", cantidadAcciones, precioGGAL, "t1", validez);
 
@@ -436,9 +434,9 @@ namespace BOTArbitradorPUTs
                 if (resPut.Exitosa && resGGAL.Exitosa)
                     ToLog($"  >>> ARBITRAJE ARMADO OK");
                 else
-                    ToLog($"  >>> ATENCION: Revisar órdenes manualmente");
+                    ToLog($"  >>> ATENCION: Revisar ï¿½rdenes manualmente");
 
-                // Volver a obtener la liquidez después de completar la compra
+                // Volver a obtener la liquidez despuï¿½s de completar la compra
                 await RefrescarLiquidez();
             }
             catch (Exception ex)
