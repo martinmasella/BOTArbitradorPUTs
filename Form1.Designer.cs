@@ -137,7 +137,7 @@
 			// 
 			chkAuto.AutoSize = true;
 			chkAuto.CheckAlign = ContentAlignment.MiddleRight;
-			chkAuto.Checked = true;
+			chkAuto.Checked = false;
 			chkAuto.CheckState = CheckState.Checked;
 			chkAuto.Font = new Font("Segoe UI", 9F, FontStyle.Regular, GraphicsUnit.Point);
 			chkAuto.ForeColor = Color.FromArgb(226, 232, 240);

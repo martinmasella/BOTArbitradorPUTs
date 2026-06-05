@@ -59,7 +59,7 @@ namespace BOTArbitradorPUTs
 
             grdDatos.Rows.Clear();
             grdDatos.Columns.Add("Ticker", "Ticker");
-            grdDatos.Columns[0].Width = 320;
+            grdDatos.Columns[0].Width = 280;
             grdDatos.Columns[0].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleRight;
             grdDatos.Columns.Add("Stamp", "Stamp");
             grdDatos.Columns[1].Width = 90;
@@ -86,10 +86,10 @@ namespace BOTArbitradorPUTs
             grdDatos.Columns[8].Width = 90;
             grdDatos.Columns[8].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Ratio", "Ratio");
-            grdDatos.Columns[9].Width = 60;
+            grdDatos.Columns[9].Width = 70;
             grdDatos.Columns[9].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.Columns.Add("Neto", "Neto");
-            grdDatos.Columns[10].Width = 90;
+            grdDatos.Columns[10].Width = 100;
             grdDatos.Columns[10].DefaultCellStyle.Alignment = DataGridViewContentAlignment.MiddleCenter;
             grdDatos.RowHeadersWidth = 4;
 
